@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <script>
+function findWordIndex(sentenceArray, searchthing) {
+    for (i = 0; i < sentenceArray.length; i++) {
+        if (sentenceArray[i] === searchWord) {
+            return i;
+        }
+    }
+    return -1; 
+}
+const sentences = ["hello world", "my friends", "how are you"];
+const searchthing = "hello";
+
+const result = findWordIndex(sentences, searchthing);
+console.log(result);
+    </script>
+</body>
+</html>

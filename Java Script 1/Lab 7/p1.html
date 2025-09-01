@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demostration</title>
+</head>
+<body>
+    <input type="text" placeholder="Enter a name" id="new" onkeydown="greet(event,afterGreet)">
+    <script>
+    // let name = document.getElementById("new");
+        function greet(event, callback) {
+            console.log("Namstey"+event.target.value)
+            // console.log("Namaste"+name);
+            callback();
+        }
+        function afterGreet(){
+            console.log("After greet call this ")
+        }
+    // greet(name,afterGreet)
+    </script>
+</body>
+</html>

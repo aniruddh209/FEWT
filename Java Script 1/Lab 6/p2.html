@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouseevent</title>
+</head>
+<body>
+    <button onclick="click1(event)">On click</button>
+    <button ondblclick="click1(event)">on double click</button>
+    <button onmousedown="click1(event)">on mousedown</button>
+    <button onmouseup="click1(event)">onmouseup</button>
+    <button onmouseenter="click1(event)"> onmouseenter</button>
+    <button onmouseleave="click1(event)">onmouseleave</button>
+    <button onmouseover="click1(event)">onmouseover</button>
+    <script>
+       function click1(e){
+        console.log(e.type)
+        }
+    </script>
+</body>
+</html>

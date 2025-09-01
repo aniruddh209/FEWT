@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .student-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .student-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .student-name {
+            font-weight: 500;
+            font-size: 18px;
+            flex-grow: 1;
+        }
+        
+        .attendance-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .present-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .present-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .absent-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .absent-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .status {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .present {
+            background-color: #d5f5e3;
+            color: #27ae60;
+        }
+        
+        .absent {
+            background-color: #fadbd8;
+            color: #c0392b;
+        }
+        
+        .summary {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        
+        .summary-item {
+            padding: 10px;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+        
+        .present-summary {
+            color: #2ecc71;
+        }
+        
+        .absent-summary {
+            color: #e74c3c;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+        
+        .reset-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Attendance Tracker</h1>
+    
+    <div class="student-list" id="studentList">
+    </div>
+    
+    <div class="summary">
+        <div class="summary-item">
+            <div>Total Present</div>
+            <div class="summary-value present-summary" id="totalPresent">0</div>
+        </div>
+        <div class="summary-item">
+            <div>Total Absent</div>
+            <div class="summary-value absent-summary" id="totalAbsent">0</div>
+        </div>
+    </div>
+    
+    <button class="reset-btn" id="resetBtn">Reset Attendance</button>
+    
+    <script>
+       const students = [
+            { id: 301, rollNo: 301, name: "Javiya Nirail Ramjibhai", batch: 1, status: "absent" },
+            { id: 302, rollNo: 302, name: "Kothadia Jal Hiteshkumar", batch: 1, status: "absent" },
+            { id: 303, rollNo: 303, name: "Parmar Bhavik Arjanbhai", batch: 1, status: "absent" },
+            { id: 304, rollNo: 304, name: "Ramani Manav Satishbhai", batch: 1, status: "absent" },
+            { id: 305, rollNo: 305, name: "Rathod Paras Ravibhai", batch: 1, status: "absent" },
+            { id: 306, rollNo: 306, name: "Chaulau Smit Hasmukhbhai", batch: 1, status: "absent" },
+            { id: 307, rollNo: 307, name: "Lungariya Tirth Jayeshbhai", batch: 1, status: "absent" },
+            { id: 308, rollNo: 308, name: "Bhatti Jiya Pankajbhai", batch: 1, status: "absent" },
+            { id: 309, rollNo: 309, name: "Dhaduk Vandan Dipakbhai", batch: 1, status: "absent" },
+            { id: 310, rollNo: 310, name: "Khorajiya Mahir Mustufa", batch: 1, status: "absent" },
+            { id: 311, rollNo: 311, name: "Dangar Naimish Hasmukhbhai", batch: 1, status: "absent" },
+            { id: 312, rollNo: 312, name: "Sureja Vrunda Sumitbhai", batch: 1, status: "absent" },
+            { id: 313, rollNo: 313, name: "Manek Malay Rishibhai", batch: 1, status: "absent" },
+            { id: 314, rollNo: 314, name: "Raiyani Vishva Nileshbhai", batch: 1, status: "absent" },
+            { id: 315, rollNo: 315, name: "Santoki Sakshiben Devendrabhai", batch: 1, status: "absent" },
+            { id: 316, rollNo: 316, name: "Solanki Naimisha Ganeshbhai", batch: 1, status: "absent" },
+            { id: 317, rollNo: 317, name: "Taraviya Krutagn Dilipkumar", batch: 1, status: "absent" },
+            { id: 318, rollNo: 318, name: "Bhatti Hardvi Rajendrabhai", batch: 1, status: "absent" },
+            { id: 319, rollNo: 319, name: "Dobariya Rutvi Rasikhhai", batch: 1, status: "absent" },
+            { id: 320, rollNo: 320, name: "Gohel Darshan Kishorbhai", batch: 1, status: "absent" },
+            { id: 321, rollNo: 321, name: "Siddhpura Vrinda Nileshbhai", batch: 2, status: "absent" },
+            { id: 322, rollNo: 322, name: "Somaiya Nihal Dipak", batch: 2, status: "absent" },
+            { id: 323, rollNo: 323, name: "Vala Harisiddhiba Jayvirsinh", batch: 2, status: "absent" },
+            { id: 324, rollNo: 324, name: "Rankja Khushi Satishbhai", batch: 2, status: "absent" },
+            { id: 325, rollNo: 325, name: "Shingala Jina Dilipbhai", batch: 2, status: "absent" },
+            { id: 326, rollNo: 326, name: "Shingala Dharmik Dharmeshbhai", batch: 2, status: "absent" },
+            { id: 327, rollNo: 327, name: "Parsana Shubham Pareshbhai", batch: 2, status: "absent" },
+            { id: 328, rollNo: 328, name: "Mendpara Krishaben Hasmukhbhai", batch: 2, status: "absent" },
+            { id: 329, rollNo: 329, name: "Barevadiya Devarsh Harikrushnabhai", batch: 2, status: "absent" },
+            { id: 330, rollNo: 330, name: "Gopani Mitsu Bharatbhai", batch: 2, status: "absent" },
+            { id: 331, rollNo: 331, name: "Jamod Kashika Pravinbhai", batch: 2, status: "absent" },
+            { id: 332, rollNo: 332, name: "Kalola Hill Kishorbhai", batch: 2, status: "absent" },
+            { id: 333, rollNo: 333, name: "Pipaliya Meet Bharatbhai", batch: 2, status: "absent" },
+            { id: 334, rollNo: 334, name: "Sadhu Kuldeep Harshadkumar", batch: 2, status: "absent" },
+            { id: 335, rollNo: 335, name: "Dhandha Aayushi Sanatbhai", batch: 2, status: "absent" },
+            { id: 336, rollNo: 336, name: "Jadeja Riddhiba Jayendrasinh", batch: 2, status: "absent" },
+            { id: 337, rollNo: 337, name: "Kanjariya Radhika Mukeshbhai", batch: 2, status: "absent" },
+            { id: 338, rollNo: 338, name: "Joshi Vivek Bhaveshbhai", batch: 2, status: "absent" },
+            { id: 339, rollNo: 339, name: "Dashadiya Yash Kishorbhai", batch: 2, status: "absent" },
+            { id: 340, rollNo: 340, name: "Kanzariya Kunal Pravinbhai", batch: 2, status: "absent" },
+            { id: 341, rollNo: 341, name: "Jodhani Dhruvbhai Rajeshkumar", batch: 3, status: "absent" },
+            { id: 342, rollNo: 342, name: "Shivang Nandani", batch: 3, status: "absent" },
+            { id: 343, rollNo: 343, name: "Rangani Arpit Dilipbhai", batch: 3, status: "absent" },
+            { id: 344, rollNo: 344, name: "Ghodasara Yashvi Dhirajlai", batch: 3, status: "absent" },
+            { id: 345, rollNo: 345, name: "Rakhasiya Nikhil Hasmukhbhai", batch: 3, status: "absent" },
+            { id: 346, rollNo: 346, name: "Dhamsaniya Princyben Ashokbhai", batch: 3, status: "absent" },
+            { id: 347, rollNo: 347, name: "Tirth Gamara", batch: 3, status: "absent" },
+            { id: 348, rollNo: 348, name: "Mahek Patel", batch: 3, status: "absent" },
+            { id: 349, rollNo: 349, name: "Kasundra Prakruti Sanjaybhai", batch: 3, status: "absent" },
+            { id: 350, rollNo: 350, name: "Kacha Param Sanjay", batch: 3, status: "absent" },
+            { id: 351, rollNo: 351, name: "Sorathiya Mann Ashvinbhai", batch: 3, status: "absent" },
+            { id: 352, rollNo: 352, name: "Vansajaliya Ankit Hemantbhai", batch: 3, status: "absent" },
+            { id: 353, rollNo: 353, name: "Fultariya om", batch: 3, status: "absent" },
+            { id: 354, rollNo: 354, name: "Manvar Hemil Rakeshbhai", batch: 3, status: "absent" },
+            { id: 355, rollNo: 355, name: "Detroja Ujjwal Narendrabhai", batch: 3, status: "absent" },
+            { id: 356, rollNo: 356, name: "Hinsu Vraj Devjibhai", batch: 3, status: "absent" },
+            { id: 357, rollNo: 357, name: "Vala Prashantkumar Maheshbhai", batch: 3, status: "absent" },
+            { id: 358, rollNo: 358, name: "Jadeja Manvendrasinh Jaydeepsinh", batch: 3, status: "absent" },
+            { id: 359, rollNo: 359, name: "Meghani Rishita Narendrabhai", batch: 3, status: "absent" },
+            { id: 360, rollNo: 360, name: "Hirani Tulsiben Rohitbhai", batch: 3, status: "absent" },
+            { id: 361, rollNo: 361, name: "Makwana Shraddha Shaileshbhai", batch: 4, status: "absent" },
+            { id: 362, rollNo: 362, name: "Bhalala Het Laitibhai", batch: 4, status: "absent" },
+            { id: 363, rollNo: 363, name: "Chotaliya Jenish Ashokbhai", batch: 4, status: "absent" },
+            { id: 364, rollNo: 364, name: "Detroja Sharadkumar Dilipbhai", batch: 4, status: "absent" },
+            { id: 365, rollNo: 365, name: "Kardani Prince Vipulbhai", batch: 4, status: "absent" },
+            { id: 366, rollNo: 366, name: "Ugheja Dax Ashokbhai", batch: 4, status: "absent" },
+            { id: 367, rollNo: 367, name: "Khambhala Tarkesh Vallabhbhai", batch: 4, status: "absent" },
+            { id: 368, rollNo: 368, name: "Sodha Kashwiniba Lakhansinh", batch: 4, status: "absent" },
+            { id: 369, rollNo: 369, name: "Vachhani Janvi Avinashbhai", batch: 4, status: "absent" },
+            { id: 370, rollNo: 370, name: "Dave Hetvi Gopalbhai", batch: 4, status: "absent" },
+            { id: 371, rollNo: 371, name: "Padia Harsh Jitendrabhai", batch: 4, status: "absent" },
+            { id: 372, rollNo: 372, name: "Umretiya Kush Bharatbhai", batch: 4, status: "absent" },
+            { id: 373, rollNo: 373, name: "Khokhar Dhruvi Govind", batch: 4, status: "absent" },
+            { id: 374, rollNo: 374, name: "Parmar Anirudhdha Govindbhai", batch: 4, status: "absent" },
+            { id: 375, rollNo: 375, name: "Bhimani Jeel Yogeshbhai", batch: 4, status: "absent" },
+            { id: 376, rollNo: 376, name: "Patel Neel Sanjaykumar", batch: 4, status: "absent" },
+            { id: 377, rollNo: 377, name: "Mehta Sneha Ashvinbhai", batch: 4, status: "absent" },
+            { id: 378, rollNo: 378, name: "Parekh Bhargav Sanjaybhai", batch: 4, status: "absent" },
+            { id: 379, rollNo: 379, name: "Sakariya Mihir Kishorbhai", batch: 4, status: "absent" },
+            { id: 380, rollNo: 380, name: "Gondaliya Shrijal Jayeshkumar", batch: 4, status: "absent" },
+            { id: 381, rollNo: 381, name: "Makvana Rutvik Kalpeshbhai", batch: 5, status: "absent" },
+            { id: 382, rollNo: 382, name: "Dodya Riya Darshanbhai", batch: 5, status: "absent" },
+            { id: 383, rollNo: 383, name: "Limbasiya Deep Pareshbhai", batch: 5, status: "absent" },
+            { id: 384, rollNo: 384, name: "Parmar Dhruvi Nareshbhai", batch: 5, status: "absent" },
+            { id: 385, rollNo: 385, name: "Vishva Thesiya", batch: 5, status: "absent" },
+            { id: 386, rollNo: 386, name: "Dave Dhruv Yogeshkumar", batch: 5, status: "absent" },
+            { id: 387, rollNo: 387, name: "Lakkad Devisbhai Arvindbhai", batch: 5, status: "absent" },
+            { id: 388, rollNo: 388, name: "Dalsaniya Yashvi Jayeshkumar", batch: 5, status: "absent" },
+            { id: 389, rollNo: 389, name: "Bhuva Shivam Ashwinbhai", batch: 5, status: "absent" },
+            { id: 390, rollNo: 390, name: "Malaviya Mitul Mukeshbhai", batch: 5, status: "absent" },
+            { id: 391, rollNo: 391, name: "Solanki Aryan Valjibhai", batch: 5, status: "absent" },
+            { id: 392, rollNo: 392, name: "Vora Rudra Girishbhai", batch: 5, status: "absent" },
+            { id: 393, rollNo: 393, name: "Solanki Vishal Rameshbhai", batch: 5, status: "absent" },
+            { id: 394, rollNo: 394, name: "Vyas Jinai Amitbhai", batch: 5, status: "absent" },
+            { id: 395, rollNo: 395, name: "Savaliya Tirth Navnitbhai", batch: 5, status: "absent" },
+            { id: 396, rollNo: 396, name: "Vasani Daksh Nikhilkumar", batch: 5, status: "absent" },
+            { id: 397, rollNo: 397, name: "Kantesaria Pari Romalbhai", batch: 5, status: "absent" },
+            { id: 398, rollNo: 398, name: "Baraiya Yash Nileshbhai", batch: 5, status: "absent" },
+            { id: 399, rollNo: 399, name: "Goswami Rudra Nileshgar", batch: 5, status: "absent" },
+            { id: 400, rollNo: 400, name: "Ladani Mann Snehalbhai", batch: 5, status: "absent" },
+            { id: 401, rollNo: 401, name: "Parmar Uday Jagdishbhai", batch: 6, status: "absent" },
+            { id: 402, rollNo: 402, name: "Parsaniya Dhruvkumar Jayendrabhai", batch: 6, status: "absent" },
+            { id: 403, rollNo: 403, name: "Vagh Dhavalbhai Nareshbhai", batch: 6, status: "absent" },
+            { id: 404, rollNo: 404, name: "Ghoniya Virunda Dilipbhai", batch: 6, status: "absent" },
+            { id: 405, rollNo: 405, name: "Sankhavara Prayag Mansukhlai", batch: 6, status: "absent" },
+            { id: 406, rollNo: 406, name: "Gohel Kuldeep Kishorbhai", batch: 6, status: "absent" },
+            { id: 407, rollNo: 407, name: "Bhoraniya Priya Sureshbhai", batch: 6, status: "absent" },
+            { id: 408, rollNo: 408, name: "Bajadiya Om Bhupatbhai", batch: 6, status: "absent" },
+            { id: 409, rollNo: 409, name: "Ghardeshiya Man Ashokbhai", batch: 6, status: "absent" },
+            { id: 410, rollNo: 410, name: "Harkhani Ronak Prafulbhai", batch: 6, status: "absent" },
+            { id: 411, rollNo: 411, name: "Aryansinh Lalakia", batch: 6, status: "absent" },
+            { id: 412, rollNo: 412, name: "Mendapara Utpal Shaileshbhai", batch: 6, status: "absent" },
+            { id: 413, rollNo: 413, name: "Bechra Diya Jayesh", batch: 6, status: "absent" },
+            { id: 414, rollNo: 414, name: "Mathakiya Navfal Kutbudin", batch: 6, status: "absent" },
+            { id: 415, rollNo: 415, name: "Kamaliya Manallben Dineshbhai", batch: 6, status: "absent" },
+            { id: 416, rollNo: 416, name: "Vaghera Vaidika Hinaben", batch: 6, status: "absent" },
+            { id: 417, rollNo: 417, name: "Dave Krisha Satyakam", batch: 6, status: "absent" },
+            { id: 418, rollNo: 418, name: "Markana Nisarg Maheshbhai", batch: 6, status: "absent" },
+            { id: 419, rollNo: 419, name: "Bagda Sandipkumar Danabhai", batch: 6, status: "absent" },
+            { id: 420, rollNo: 420, name: "Vora Preet Chetankumar", batch: 6, status: "absent" },
+            { id: 421, rollNo: 421, name: "Dhamsaniya Diwani Kishorbhai", batch: 7, status: "absent" },
+            { id: 422, rollNo: 422, name: "Mungara Meet Vithalbhai", batch: 7, status: "absent" },
+            { id: 423, rollNo: 423, name: "Hinsu Maitri Dipakhhai", batch: 7, status: "absent" },
+            { id: 424, rollNo: 424, name: "Mehta Vatsal Yogeshkumar", batch: 7, status: "absent" },
+            { id: 425, rollNo: 425, name: "Chadamiya Bhavy Babulal", batch: 7, status: "absent" },
+            { id: 426, rollNo: 426, name: "Bavaliya Tushar Pravinbhai", batch: 7, status: "absent" },
+            { id: 427, rollNo: 427, name: "Kotadia Richa Cheritkumar", batch: 7, status: "absent" },
+            { id: 428, rollNo: 428, name: "Chauhan Krutarth Rajubhai", batch: 7, status: "absent" },
+            { id: 429, rollNo: 429, name: "Sheth Harsh Ketanbhai", batch: 7, status: "absent" }
+        ];
+        const studentList = document.getElementById('studentList');
+        const totalPresent = document.getElementById('totalPresent');
+        const totalAbsent = document.getElementById('totalAbsent');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        function renderStudentList() {
+            studentList.innerHTML = '';
+            
+            let presentCount = 0;
+            let absentCount = 0;
+            
+            students.forEach(student => {
+                const studentItem = document.createElement('div');
+                studentItem.className = 'student-item';
+                
+                const statusClass = student.status === 'present' ? 'present' : 'absent';
+                
+                studentItem.innerHTML = `
+                    <div class="student-name">${student.name}</div>
+                    <div class="status ${statusClass}">${student.status.toUpperCase()}</div>
+                    <div class="attendance-buttons">
+                        <button class="present-btn" data-id="${student.id}">Present</button>
+                        <button class="absent-btn" data-id="${student.id}">Absent</button>
+                    </div>
+                `;
+                
+                studentList.appendChild(studentItem);
+                
+                if (student.status === 'present') {
+                    presentCount++;
+                } else {
+                    absentCount++;
+                }
+            });
+            
+            totalPresent.textContent = presentCount;
+            totalAbsent.textContent = absentCount;
+        }
+        studentList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('present-btn')) {
+                const studentId = parseInt(e.target.getAttribute('data-id'));
+                const student = students.find(s => s.id === studentId);
+                student.status = 'present';
+                renderStudentList();
+            } else if (e.target.classList.contains('absent-btn')) {
+                const studentId = parseInt(e.target.getAttribute('data-id'));
+                const student = students.find(s => s.id === studentId);
+                student.status = 'absent';
+                renderStudentList();
+            }
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            students.forEach(student => {
+                student.status = 'absent';
+            });
+            renderStudentList();
+        });
+        
+        renderStudentList();
+    </script>
+</body>
+</html>

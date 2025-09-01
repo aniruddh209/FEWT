@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+
+<body>
+    <form>
+        <div>
+            <input type="text" id="panel">
+        </div>
+        <br>
+        <div>
+            <input type="button" value="AC" style="padding: 10px; margin-right: 10px;" onclick="panel.value=''">
+            <input type="button" value="C" style="padding: 10px ; margin-right: 10px;" onclick="panel.value=''">
+            <input type="button" value="%" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='%'">
+            <input type="button" value="/" style="padding: 10px ;" onclick="panel.value+='/'">
+        </div>
+        <br>
+        <div>
+            <input type="button" value="7" style="padding: 10px; margin-right: 10px;" onclick="panel.value+='7'">
+            <input type="button" value="8" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='8'">
+            <input type="button" value="9" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='9'">
+            <input type="button" value="*" style="padding: 10px ;" onclick="panel.value+='*'">
+        </div>
+        <br>
+        <div>
+            <input type="button" value="4" style="padding: 10px; margin-right: 10px;" onclick="panel.value+='4'">
+            <input type="button" value="5" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='5'">
+            <input type="button" value="6" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='6'">
+            <input type="button" value="-" style="padding: 10px ;" onclick="panel.value+='-'">
+        </div>
+        <br>
+        <div>
+            <input type="button" value="1" style="padding: 10px; margin-right: 10px;" onclick="panel.value+='1'">
+            <input type="button" value="2" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='2'">
+            <input type="button" value="3" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='3'">
+            <input type="button" value="+" style="padding: 10px ;" onclick="panel.value+='+'">
+        </div>
+        <br>
+        <div>
+            <input type="button" value="00" style="padding: 10px; margin-right: 10px;" onclick="panel.value+='00'">
+            <input type="button" value="0" style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='0'">
+            <input type="button" value="." style="padding: 10px ; margin-right: 10px;" onclick="panel.value+='.'">
+            <input type="button" value="BACK" style="padding: 10px ;" onclick="panel.value=''">
+        </div>
+        <br>
+        <input type="button" value="=" style="padding: 10px ;" onclick="p()">
+    </form>
+    <br>
+    <script>
+      
+
+        function p() {
+            let a = document.getElementById('panel');
+            let b = a.value;
+            for (let i = 0; i < b.length; i++) {
+                if (b.charAt(i) == '+') {
+                    let c = b.split('+')
+                    let n1 = parseInt(c[0]);
+                    let n2 = parseInt(c[1]);
+                    a.value = n1+n2;
+                }
+
+                else  if (b.charAt(i) == '-') {
+                    let c = b.split('-')
+                    let n1 = parseInt(c[0]);
+                    let n2 = parseInt(c[1]);
+                    a.value = n1-n2;
+                }
+
+                else  if (b.charAt(i) == '*') {
+                    let c = b.split('*')
+                    let n1 = parseInt(c[0]);
+                    let n2 = parseInt(c[1]);
+                    a.value = n1*n2;
+                }
+
+                else  if (b.charAt(i) == '/') {
+                    let c = b.split('/')
+                    let n1 = parseInt(c[0]);
+                    let n2 = parseInt(c[1]);
+                    a.value = n1/ n2;
+                }
+            }
+        
+        }
+       
+    </script>
+</body>
+
+</html>

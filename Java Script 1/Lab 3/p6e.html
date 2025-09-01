@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>spiltstring</title>
+  </head>
+  <body>
+    <script>
+      function findWordIndex(sentenceArray, searchthing) {
+        for (i = 0; i < sentenceArray.length; i++) {
+          words = sentenceArray[i].split(" ");
+          for (j = 0; j < words.length; j++) {
+            if (words[j] === searchthing) {
+              return j;
+            }
+          }
+        }
+        return -1;
+      }
+      const sentences = ["hello world", "my friends", "how are you"];
+      const searchthing = "hello";
+      index = findWordIndex(sentences, searchthing);
+      console.log("The index of the word is" + index);
+    </script>
+  </body>
+</html>

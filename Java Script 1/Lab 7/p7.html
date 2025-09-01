@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arrow Functions Demo</title>
+</head>
+<body>
+    <h2>Arrow Functions Demonstration</h2>
+    <div id="output"></div>
+    <script>
+        const add = (a, b) => a + b;
+
+        const square = x => x * x;
+
+        const greet = () => "Hello, World!";
+
+        const createUser = (name, age) => ({ name, age });
+
+        const output = document.getElementById('output');
+        output.innerHTML = `
+            <p>add(2, 3): ${add(2, 3)}</p>
+            <p>square(5): ${square(5)}</p>
+            <p>greet(): ${greet()}</p>
+            <p>createUser('Alice', 25): ${JSON.stringify(createUser('Alice', 25))}</p>
+        `;
+    </script>
+</body>
+</html>

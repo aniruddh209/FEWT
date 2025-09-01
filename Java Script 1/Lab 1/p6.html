@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armstrong</title>
+</head>
+<body>
+    <script>
+        function isArmstrong(num) {
+            let original_num = num;
+            let sum = 0;
+            let digits = num.toString().length;
+
+            let temp = num;
+            while (temp > 0) {
+                let digit = temp % 10;
+                sum += Math.pow(digit, digits);
+                temp = Math.floor(temp / 10);
+            }
+            if (sum === original_num) {
+                console.log(original_num + " is an Armstrong number");
+            } else {
+                console.log(original_num + " is not an Armstrong number");
+            }
+        }
+
+        let input = prompt("Enter a number:");
+        isArmstrong((input));
+    </script>
+</body>
+</html>

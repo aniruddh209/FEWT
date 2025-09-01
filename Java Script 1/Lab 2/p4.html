@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCD</title>
+</head>
+<body>
+    <script>
+        a=prompt("Enter a first number=")
+        b=prompt("Enter second number")
+        gcd=1;
+        min=Math.min(a,b);
+        for(i=1;i<=min;i++){
+            if(a%i==0&&b%i==0){
+                gcd=i;
+            }
+        }
+        document.write("a and b gcd was="+gcd);
+    </script>
+</body>
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE-3B Attendance Tracker</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --success: #2ecc71;
+            --success-dark: #27ae60;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --white: #ffffff;
+            --purple: #9b59b6;
+            --purple-dark: #8e44ad;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-card h3 {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .present-summary {
+            color: var(--success);
+        }
+        
+        .absent-summary {
+            color: var(--danger);
+        }
+        
+        .total-summary {
+            color: var(--primary);
+        }
+        
+        .student-list-container {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .list-header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 8px 15px 8px 35px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+        
+        .student-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+        
+        .student-item:hover {
+            background-color: var(--light);
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+        
+        .roll-number {
+            width: 50px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+        
+        .student-name {
+            font-weight: 500;
+            font-size: 1rem;
+            margin-left: 15px;
+        }
+        
+        .batch-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+            background: #e0e0e0;
+            color: var(--dark);
+        }
+        
+        .status-container {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .status {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            padding: 6px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .present {
+            background-color: #d5f5e3;
+            color: var(--success-dark);
+        }
+        
+        .absent {
+            background-color: #fadbd8;
+            color: var(--danger-dark);
+        }
+        
+        .attendance-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .present-btn {
+            background-color: var(--success);
+            color: var(--white);
+        }
+        
+        .present-btn:hover {
+            background-color: var(--success-dark);
+            transform: translateY(-2px);
+        }
+        
+        .absent-btn {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+        
+        .absent-btn:hover {
+            background-color: var(--danger-dark);
+            transform: translateY(-2px);
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .reset-btn, .save-btn, .export-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .reset-btn {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+        
+        .reset-btn:hover {
+            background-color: var(--danger-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+        
+        .save-btn {
+            background-color: var(--success);
+            color: var(--white);
+        }
+        
+        .save-btn:hover {
+            background-color: var(--success-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+        
+        .export-btn {
+            background-color: var(--purple);
+            color: var(--white);
+        }
+        
+        .export-btn:hover {
+            background-color: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(155, 89, 182, 0.3);
+        }
+        
+        .download-link {
+            display: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .status-change {
+            animation: statusChange 0.4s ease;
+        }
+        
+        @keyframes statusChange {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .student-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .status-container {
+                margin-right: 0;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-box {
+                width: 180px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .reset-btn, .save-btn, .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CSE-3B Attendance Tracker</h1>
+            <p class="subtitle">Academic Year 2025-26 | Semester 3</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Students</h3>
+                    <div class="summary-value total-summary" id="totalStudents">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Present Today</h3>
+                    <div class="summary-value present-summary" id="totalPresent">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Absent Today</h3>
+                    <div class="summary-value absent-summary" id="totalAbsent">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Attendance %</h3>
+                    <div class="summary-value" id="attendancePercent">0%</div>
+                </div>
+            </div>
+            
+            <div class="student-list-container">
+                <div class="list-header">
+                    <h2>Student List</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search students...">
+                    </div>
+                </div>
+                
+                <div class="student-list" id="studentList">
+                    <!-- Student items will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="reset-btn" id="resetBtn">
+                <i class="fas fa-redo"></i> Reset All
+            </button>
+            <button class="save-btn" id="saveBtn">
+                <i class="fas fa-save"></i> Save Attendance
+            </button>
+            <button class="export-btn" id="exportBtn">
+                <i class="fas fa-file-export"></i> Export Absent List
+            </button>
+            <a id="downloadAnchor" class="download-link"></a>
+        </div>
+    </div>
+    
+    <script>
+        const students = [
+            { id: 301, rollNo: 301, name: "Javiya Nirail Ramjibhai", batch: 1, status: "absent" },
+            { id: 302, rollNo: 302, name: "Kothadia Jal Hiteshkumar", batch: 1, status: "absent" },
+            { id: 303, rollNo: 303, name: "Parmar Bhavik Arjanbhai", batch: 1, status: "absent" },
+            { id: 304, rollNo: 304, name: "Ramani Manav Satishbhai", batch: 1, status: "absent" },
+            { id: 305, rollNo: 305, name: "Rathod Paras Ravibhai", batch: 1, status: "absent" },
+            { id: 306, rollNo: 306, name: "Chaulau Smit Hasmukhbhai", batch: 1, status: "absent" },
+            { id: 307, rollNo: 307, name: "Lungariya Tirth Jayeshbhai", batch: 1, status: "absent" },
+            { id: 308, rollNo: 308, name: "Bhatti Jiya Pankajbhai", batch: 1, status: "absent" },
+            { id: 309, rollNo: 309, name: "Dhaduk Vandan Dipakbhai", batch: 1, status: "absent" },
+            { id: 310, rollNo: 310, name: "Khorajiya Mahir Mustufa", batch: 1, status: "absent" },
+            { id: 311, rollNo: 311, name: "Dangar Naimish Hasmukhbhai", batch: 1, status: "absent" },
+            { id: 312, rollNo: 312, name: "Sureja Vrunda Sumitbhai", batch: 1, status: "absent" },
+            { id: 313, rollNo: 313, name: "Manek Malay Rishibhai", batch: 1, status: "absent" },
+            { id: 314, rollNo: 314, name: "Raiyani Vishva Nileshbhai", batch: 1, status: "absent" },
+            { id: 315, rollNo: 315, name: "Santoki Sakshiben Devendrabhai", batch: 1, status: "absent" },
+            { id: 316, rollNo: 316, name: "Solanki Naimisha Ganeshbhai", batch: 1, status: "absent" },
+            { id: 317, rollNo: 317, name: "Taraviya Krutagn Dilipkumar", batch: 1, status: "absent" },
+            { id: 318, rollNo: 318, name: "Bhatti Hardvi Rajendrabhai", batch: 1, status: "absent" },
+            { id: 319, rollNo: 319, name: "Dobariya Rutvi Rasikhhai", batch: 1, status: "absent" },
+            { id: 320, rollNo: 320, name: "Gohel Darshan Kishorbhai", batch: 1, status: "absent" },
+            { id: 321, rollNo: 321, name: "Siddhpura Vrinda Nileshbhai", batch: 2, status: "absent" },
+            { id: 322, rollNo: 322, name: "Somaiya Nihal Dipak", batch: 2, status: "absent" },
+            { id: 323, rollNo: 323, name: "Vala Harisiddhiba Jayvirsinh", batch: 2, status: "absent" },
+            { id: 324, rollNo: 324, name: "Rankja Khushi Satishbhai", batch: 2, status: "absent" },
+            { id: 325, rollNo: 325, name: "Shingala Jina Dilipbhai", batch: 2, status: "absent" },
+            { id: 326, rollNo: 326, name: "Shingala Dharmik Dharmeshbhai", batch: 2, status: "absent" },
+            { id: 327, rollNo: 327, name: "Parsana Shubham Pareshbhai", batch: 2, status: "absent" },
+            { id: 328, rollNo: 328, name: "Mendpara Krishaben Hasmukhbhai", batch: 2, status: "absent" },
+            { id: 329, rollNo: 329, name: "Barevadiya Devarsh Harikrushnabhai", batch: 2, status: "absent" },
+            { id: 330, rollNo: 330, name: "Gopani Mitsu Bharatbhai", batch: 2, status: "absent" },
+            { id: 331, rollNo: 331, name: "Jamod Kashika Pravinbhai", batch: 2, status: "absent" },
+            { id: 332, rollNo: 332, name: "Kalola Hill Kishorbhai", batch: 2, status: "absent" },
+            { id: 333, rollNo: 333, name: "Pipaliya Meet Bharatbhai", batch: 2, status: "absent" },
+            { id: 334, rollNo: 334, name: "Sadhu Kuldeep Harshadkumar", batch: 2, status: "absent" },
+            { id: 335, rollNo: 335, name: "Dhandha Aayushi Sanatbhai", batch: 2, status: "absent" },
+            { id: 336, rollNo: 336, name: "Jadeja Riddhiba Jayendrasinh", batch: 2, status: "absent" },
+            { id: 337, rollNo: 337, name: "Kanjariya Radhika Mukeshbhai", batch: 2, status: "absent" },
+            { id: 338, rollNo: 338, name: "Joshi Vivek Bhaveshbhai", batch: 2, status: "absent" },
+            { id: 339, rollNo: 339, name: "Dashadiya Yash Kishorbhai", batch: 2, status: "absent" },
+            { id: 340, rollNo: 340, name: "Kanzariya Kunal Pravinbhai", batch: 2, status: "absent" },
+            { id: 341, rollNo: 341, name: "Jodhani Dhruvbhai Rajeshkumar", batch: 3, status: "absent" },
+            { id: 342, rollNo: 342, name: "Shivang Nandani", batch: 3, status: "absent" },
+            { id: 343, rollNo: 343, name: "Rangani Arpit Dilipbhai", batch: 3, status: "absent" },
+            { id: 344, rollNo: 344, name: "Ghodasara Yashvi Dhirajlai", batch: 3, status: "absent" },
+            { id: 345, rollNo: 345, name: "Rakhasiya Nikhil Hasmukhbhai", batch: 3, status: "absent" },
+            { id: 346, rollNo: 346, name: "Dhamsaniya Princyben Ashokbhai", batch: 3, status: "absent" },
+            { id: 347, rollNo: 347, name: "Tirth Gamara", batch: 3, status: "absent" },
+            { id: 348, rollNo: 348, name: "Mahek Patel", batch: 3, status: "absent" },
+            { id: 349, rollNo: 349, name: "Kasundra Prakruti Sanjaybhai", batch: 3, status: "absent" },
+            { id: 350, rollNo: 350, name: "Kacha Param Sanjay", batch: 3, status: "absent" },
+            { id: 351, rollNo: 351, name: "Sorathiya Mann Ashvinbhai", batch: 3, status: "absent" },
+            { id: 352, rollNo: 352, name: "Vansajaliya Ankit Hemantbhai", batch: 3, status: "absent" },
+            { id: 353, rollNo: 353, name: "Fultariya om", batch: 3, status: "absent" },
+            { id: 354, rollNo: 354, name: "Manvar Hemil Rakeshbhai", batch: 3, status: "absent" },
+            { id: 355, rollNo: 355, name: "Detroja Ujjwal Narendrabhai", batch: 3, status: "absent" },
+            { id: 356, rollNo: 356, name: "Hinsu Vraj Devjibhai", batch: 3, status: "absent" },
+            { id: 357, rollNo: 357, name: "Vala Prashantkumar Maheshbhai", batch: 3, status: "absent" },
+            { id: 358, rollNo: 358, name: "Jadeja Manvendrasinh Jaydeepsinh", batch: 3, status: "absent" },
+            { id: 359, rollNo: 359, name: "Meghani Rishita Narendrabhai", batch: 3, status: "absent" },
+            { id: 360, rollNo: 360, name: "Hirani Tulsiben Rohitbhai", batch: 3, status: "absent" },
+            { id: 361, rollNo: 361, name: "Makwana Shraddha Shaileshbhai", batch: 4, status: "absent" },
+            { id: 362, rollNo: 362, name: "Bhalala Het Laitibhai", batch: 4, status: "absent" },
+            { id: 363, rollNo: 363, name: "Chotaliya Jenish Ashokbhai", batch: 4, status: "absent" },
+            { id: 364, rollNo: 364, name: "Detroja Sharadkumar Dilipbhai", batch: 4, status: "absent" },
+            { id: 365, rollNo: 365, name: "Kardani Prince Vipulbhai", batch: 4, status: "absent" },
+            { id: 366, rollNo: 366, name: "Ugheja Dax Ashokbhai", batch: 4, status: "absent" },
+            { id: 367, rollNo: 367, name: "Khambhala Tarkesh Vallabhbhai", batch: 4, status: "absent" },
+            { id: 368, rollNo: 368, name: "Sodha Kashwiniba Lakhansinh", batch: 4, status: "absent" },
+            { id: 369, rollNo: 369, name: "Vachhani Janvi Avinashbhai", batch: 4, status: "absent" },
+            { id: 370, rollNo: 370, name: "Dave Hetvi Gopalbhai", batch: 4, status: "absent" },
+            { id: 371, rollNo: 371, name: "Padia Harsh Jitendrabhai", batch: 4, status: "absent" },
+            { id: 372, rollNo: 372, name: "Umretiya Kush Bharatbhai", batch: 4, status: "absent" },
+            { id: 373, rollNo: 373, name: "Khokhar Dhruvi Govind", batch: 4, status: "absent" },
+            { id: 374, rollNo: 374, name: "Parmar Anirudhdha Govindbhai", batch: 4, status: "absent" },
+            { id: 375, rollNo: 375, name: "Bhimani Jeel Yogeshbhai", batch: 4, status: "absent" },
+            { id: 376, rollNo: 376, name: "Patel Neel Sanjaykumar", batch: 4, status: "absent" },
+            { id: 377, rollNo: 377, name: "Mehta Sneha Ashvinbhai", batch: 4, status: "absent" },
+            { id: 378, rollNo: 378, name: "Parekh Bhargav Sanjaybhai", batch: 4, status: "absent" },
+            { id: 379, rollNo: 379, name: "Sakariya Mihir Kishorbhai", batch: 4, status: "absent" },
+            { id: 380, rollNo: 380, name: "Gondaliya Shrijal Jayeshkumar", batch: 4, status: "absent" },
+            { id: 381, rollNo: 381, name: "Makvana Rutvik Kalpeshbhai", batch: 5, status: "absent" },
+            { id: 382, rollNo: 382, name: "Dodya Riya Darshanbhai", batch: 5, status: "absent" },
+            { id: 383, rollNo: 383, name: "Limbasiya Deep Pareshbhai", batch: 5, status: "absent" },
+            { id: 384, rollNo: 384, name: "Parmar Dhruvi Nareshbhai", batch: 5, status: "absent" },
+            { id: 385, rollNo: 385, name: "Vishva Thesiya", batch: 5, status: "absent" },
+            { id: 386, rollNo: 386, name: "Dave Dhruv Yogeshkumar", batch: 5, status: "absent" },
+            { id: 387, rollNo: 387, name: "Lakkad Devisbhai Arvindbhai", batch: 5, status: "absent" },
+            { id: 388, rollNo: 388, name: "Dalsaniya Yashvi Jayeshkumar", batch: 5, status: "absent" },
+            { id: 389, rollNo: 389, name: "Bhuva Shivam Ashwinbhai", batch: 5, status: "absent" },
+            { id: 390, rollNo: 390, name: "Malaviya Mitul Mukeshbhai", batch: 5, status: "absent" },
+            { id: 391, rollNo: 391, name: "Solanki Aryan Valjibhai", batch: 5, status: "absent" },
+            { id: 392, rollNo: 392, name: "Vora Rudra Girishbhai", batch: 5, status: "absent" },
+            { id: 393, rollNo: 393, name: "Solanki Vishal Rameshbhai", batch: 5, status: "absent" },
+            { id: 394, rollNo: 394, name: "Vyas Jinai Amitbhai", batch: 5, status: "absent" },
+            { id: 395, rollNo: 395, name: "Savaliya Tirth Navnitbhai", batch: 5, status: "absent" },
+            { id: 396, rollNo: 396, name: "Vasani Daksh Nikhilkumar", batch: 5, status: "absent" },
+            { id: 397, rollNo: 397, name: "Kantesaria Pari Romalbhai", batch: 5, status: "absent" },
+            { id: 398, rollNo: 398, name: "Baraiya Yash Nileshbhai", batch: 5, status: "absent" },
+            { id: 399, rollNo: 399, name: "Goswami Rudra Nileshgar", batch: 5, status: "absent" },
+            { id: 400, rollNo: 400, name: "Ladani Mann Snehalbhai", batch: 5, status: "absent" },
+            { id: 401, rollNo: 401, name: "Parmar Uday Jagdishbhai", batch: 6, status: "absent" },
+            { id: 402, rollNo: 402, name: "Parsaniya Dhruvkumar Jayendrabhai", batch: 6, status: "absent" },
+            { id: 403, rollNo: 403, name: "Vagh Dhavalbhai Nareshbhai", batch: 6, status: "absent" },
+            { id: 404, rollNo: 404, name: "Ghoniya Virunda Dilipbhai", batch: 6, status: "absent" },
+            { id: 405, rollNo: 405, name: "Sankhavara Prayag Mansukhlai", batch: 6, status: "absent" },
+            { id: 406, rollNo: 406, name: "Gohel Kuldeep Kishorbhai", batch: 6, status: "absent" },
+            { id: 407, rollNo: 407, name: "Bhoraniya Priya Sureshbhai", batch: 6, status: "absent" },
+            { id: 408, rollNo: 408, name: "Bajadiya Om Bhupatbhai", batch: 6, status: "absent" },
+            { id: 409, rollNo: 409, name: "Ghardeshiya Man Ashokbhai", batch: 6, status: "absent" },
+            { id: 410, rollNo: 410, name: "Harkhani Ronak Prafulbhai", batch: 6, status: "absent" },
+            { id: 411, rollNo: 411, name: "Aryansinh Lalakia", batch: 6, status: "absent" },
+            { id: 412, rollNo: 412, name: "Mendapara Utpal Shaileshbhai", batch: 6, status: "absent" },
+            { id: 413, rollNo: 413, name: "Bechra Diya Jayesh", batch: 6, status: "absent" },
+            { id: 414, rollNo: 414, name: "Mathakiya Navfal Kutbudin", batch: 6, status: "absent" },
+            { id: 415, rollNo: 415, name: "Kamaliya Manallben Dineshbhai", batch: 6, status: "absent" },
+            { id: 416, rollNo: 416, name: "Vaghera Vaidika Hinaben", batch: 6, status: "absent" },
+            { id: 417, rollNo: 417, name: "Dave Krisha Satyakam", batch: 6, status: "absent" },
+            { id: 418, rollNo: 418, name: "Markana Nisarg Maheshbhai", batch: 6, status: "absent" },
+            { id: 419, rollNo: 419, name: "Bagda Sandipkumar Danabhai", batch: 6, status: "absent" },
+            { id: 420, rollNo: 420, name: "Vora Preet Chetankumar", batch: 6, status: "absent" },
+            { id: 421, rollNo: 421, name: "Dhamsaniya Diwani Kishorbhai", batch: 7, status: "absent" },
+            { id: 422, rollNo: 422, name: "Mungara Meet Vithalbhai", batch: 7, status: "absent" },
+            { id: 423, rollNo: 423, name: "Hinsu Maitri Dipakhhai", batch: 7, status: "absent" },
+            { id: 424, rollNo: 424, name: "Mehta Vatsal Yogeshkumar", batch: 7, status: "absent" },
+            { id: 425, rollNo: 425, name: "Chadamiya Bhavy Babulal", batch: 7, status: "absent" },
+            { id: 426, rollNo: 426, name: "Bavaliya Tushar Pravinbhai", batch: 7, status: "absent" },
+            { id: 427, rollNo: 427, name: "Kotadia Richa Cheritkumar", batch: 7, status: "absent" },
+            { id: 428, rollNo: 428, name: "Chauhan Krutarth Rajubhai", batch: 7, status: "absent" },
+            { id: 429, rollNo: 429, name: "Sheth Harsh Ketanbhai", batch: 7, status: "absent" }
+        ];
+        
+        const studentListEl = document.getElementById('studentList');
+        const totalStudentsEl = document.getElementById('totalStudents');
+        const totalPresentEl = document.getElementById('totalPresent');
+        const totalAbsentEl = document.getElementById('totalAbsent');
+        const attendancePercentEl = document.getElementById('attendancePercent');
+        const resetBtn = document.getElementById('resetBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const downloadAnchor = document.getElementById('downloadAnchor');
+        const searchInput = document.getElementById('searchInput');
+        
+        function init() {
+            renderStudentList();
+            updateSummary();
+            
+            const savedAttendance = localStorage.getItem('cse3bAttendance');
+            if (savedAttendance) {
+                const savedData = JSON.parse(savedAttendance);
+                students.forEach(student => {
+                    const savedStudent = savedData.find(s => s.id === student.id);
+                    if (savedStudent) {
+                        student.status = savedStudent.status;
+                    }
+                });
+                renderStudentList();
+                updateSummary();
+            }
+        }
+        
+        function renderStudentList(filteredStudents = null) {
+            studentListEl.innerHTML = '';
+            
+            const studentsToRender = filteredStudents || students;
+            
+            studentsToRender.forEach(student => {
+                const studentItem = document.createElement('div');
+                studentItem.className = 'student-item';
+                studentItem.dataset.id = student.id;
+                
+                const statusClass = student.status === 'present' ? 'present' : 'absent';
+                
+                studentItem.innerHTML = `
+                    <div class="student-info">
+                        <div class="roll-number">${student.rollNo}</div>
+                        <div class="student-name">
+                            ${student.name}
+                            <span class="batch-tag">Batch ${student.batch}</span>
+                        </div>
+                    </div>
+                    <div class="status-container">
+                        <div class="status ${statusClass}">${student.status.toUpperCase()}</div>
+                        <div class="attendance-buttons">
+                            <button class="present-btn" data-id="${student.id}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="absent-btn" data-id="${student.id}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                studentListEl.appendChild(studentItem);
+            });
+        }
+        
+        function updateSummary() {
+            const presentCount = students.filter(s => s.status === 'present').length;
+            const absentCount = students.length - presentCount;
+            const percentage = ((presentCount / students.length) * 100).toFixed(1);
+            
+            totalStudentsEl.textContent = students.length;
+            totalPresentEl.textContent = presentCount;
+            totalAbsentEl.textContent = absentCount;
+            attendancePercentEl.textContent = `${percentage}%`;
+            
+            animateValue(totalPresentEl, parseInt(totalPresentEl.textContent), presentCount, 500);
+            animateValue(totalAbsentEl, parseInt(totalAbsentEl.textContent), absentCount, 500);
+        }
+        
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        studentListEl.addEventListener('click', (e) => {
+            const presentBtn = e.target.closest('.present-btn');
+            const absentBtn = e.target.closest('.absent-btn');
+            
+            if (presentBtn || absentBtn) {
+                const studentId = parseInt((presentBtn || absentBtn).getAttribute('data-id'));
+                const student = students.find(s => s.id === studentId);
+                const newStatus = presentBtn ? 'present' : 'absent';
+                
+                if (student.status !== newStatus) {
+                    student.status = newStatus;
+                    
+                    const studentItem = (presentBtn || absentBtn).closest('.student-item');
+                    const statusElement = studentItem.querySelector('.status');
+                    
+                    statusElement.textContent = newStatus.toUpperCase();
+                    statusElement.className = `status ${newStatus} status-change`;
+                    
+                    setTimeout(() => {
+                        statusElement.classList.remove('status-change');
+                    }, 400);
+                    
+                    updateSummary();
+                }
+            }
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all attendance?')) {
+                students.forEach(student => {
+                    student.status = 'absent';
+                });
+                
+                document.querySelectorAll('.student-item').forEach(item => {
+                    const statusElement = item.querySelector('.status');
+                    statusElement.textContent = 'ABSENT';
+                    statusElement.className = 'status absent status-change';
+                    
+                    setTimeout(() => {
+                        statusElement.classList.remove('status-change');
+                    }, 400);
+                });
+                
+                updateSummary();
+                
+                resetBtn.classList.add('pulse-animation');
+                setTimeout(() => {
+                    resetBtn.classList.remove('pulse-animation');
+                }, 300);
+            }
+        });
+        
+        saveBtn.addEventListener('click', () => {
+            localStorage.setItem('cse3bAttendance', JSON.stringify(students));
+            
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            saveBtn.classList.add('pulse-animation');
+            setTimeout(() => {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
+                saveBtn.classList.remove('pulse-animation');
+            }, 1500);
+        });
+        
+        exportBtn.addEventListener('click', () => {
+            const absentStudents = students.filter(student => student.status === 'absent');
+            
+            if (absentStudents.length === 0) {
+                alert('No absent students to export!');
+                return;
+            }
+            
+            let csvContent = "Roll No,Name,Batch\n";
+            absentStudents.forEach(student => {
+                csvContent += `${student.rollNo},"${student.name}",${student.batch}\n`;
+            });
+            
+            const jsonContent = JSON.stringify(absentStudents, null, 2);
+            
+            const format = prompt("Choose export format:\n1 for CSV (Excel)\n2 for JSON\n3 for TXT", "1");
+            
+            let fileName = `CSE-3B_Absent_Students_${new Date().toISOString().slice(0,10)}`;
+            let fileContent, mimeType;
+            
+            switch(format) {
+                case "1":
+                    fileName += ".csv";
+                    fileContent = csvContent;
+                    mimeType = "text/csv;charset=utf-8;";
+                    break;
+                case "2":
+                    fileName += ".json";
+                    fileContent = jsonContent;
+                    mimeType = "application/json;charset=utf-8;";
+                    break;
+                default:
+                    fileName += ".txt";
+                    fileContent = `Absent Students List - ${new Date().toDateString()}\n\n`;
+                    absentStudents.forEach(student => {
+                        fileContent += `${student.rollNo},`;
+                    });
+                    mimeType = "text/plain;charset=utf-8;";
+            }
+            
+            const blob = new Blob([fileContent], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            downloadAnchor.href = url;
+            downloadAnchor.download = fileName;
+            downloadAnchor.click();
+            
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
+            
+            exportBtn.classList.add('pulse-animation');
+            setTimeout(() => {
+                exportBtn.classList.remove('pulse-animation');
+            }, 300);
+        });
+        
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.trim() === '') {
+                renderStudentList();
+                return;
+            }
+            
+            const filteredStudents = students.filter(student => 
+                student.name.toLowerCase().includes(searchTerm) || 
+                student.rollNo.toString().includes(searchTerm)
+            );
+            
+            renderStudentList(filteredStudents);
+        });
+        init();
+    </script>
+</body>
+</html>

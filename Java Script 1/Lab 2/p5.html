@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p5</title>
+</head>
+<body>
+    <script>
+        num1 = parseInt(prompt("Enter the first number:"));
+        num2 = parseInt(prompt("Enter the second number:"));
+        product = 1;
+        temp1 = num1;
+        while (temp1 > 0) {
+            product *= temp1 % 10;
+            temp1 = Math.floor(temp1 / 10);
+        }
+        temp2 = num2;
+        while (temp2 > 0) {
+            product *= temp2 % 10;
+            temp2 = Math.floor(temp2 / 10);
+        }
+
+        document.write("Product of all digits of " + num1 + " and " + num2 + " is: " + product);
+    </script>
+</body>
+</html>

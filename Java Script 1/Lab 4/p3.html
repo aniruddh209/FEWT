@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>functionkeydemo</title>
+</head>
+<body>
+    <script>
+        let fruits = ['apple', 'banana', 'orange'];
+        console.log('Original array:', fruits);
+        
+    </script>
+    <script>
+        fruits.push('grape', 'mango');
+        console.log('After push:', fruits);
+    </script>
+    <script>
+        let lastFruit = fruits.pop();//removed at last
+        console.log('Removed:', lastFruit);
+        console.log('After pop:', fruits); 
+    </script>
+    <script>
+        let firstFruit = fruits.shift();//removed at first
+    console.log('Removed:', firstFruit); 
+    console.log('After shift:', fruits);
+    </script>
+    <script>
+        fruits.unshift('kiwi', 'pear');//add at first
+        console.log('After unshift:', fruits); 
+    </script>
+    <script>
+        // Remove 1 element at index 2
+let removed = fruits.splice(2, 1);//splice in bracket remove 1 element of index 2
+console.log('Removed:', removed);
+console.log('After splice (remove):', fruits); 
+
+// Add elements at index 1 (remove 0 elements)
+fruits.splice(1, 0, 'pineapple', 'melon');
+console.log('After splice (add):', fruits); // ['kiwi', 'pineapple', 'melon', 'pear', 'orange', 'grape']
+
+// Replace 1 element at index 3 with 2 new elements
+fruits.splice(3, 1, 'strawberry', 'blueberry');
+console.log('After splice (replace):', fruits); // ['kiwi', 'pineapple', 'melon', 'strawberry', 'blueberry', 'orange', 'grape']
+    </script>
+    <script>
+    fruits.sort();
+    console.log('Sorted alphabetically:', fruits);
+     </script>
+     <script>
+    let numbers = [10, 5, 8, 1, 7];
+    numbers.sort((a, b) => a - b);
+    console.log('Sorted numbers:', numbers); // [1, 5, 7, 8, 10]
+    </script>
+
+</body>
+</html>

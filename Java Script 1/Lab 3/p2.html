@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascending Order</title>
+</head>
+<body>
+    <script>
+        let size = parseInt(prompt("Enter the size of array:"));
+        let arr = [];
+        
+        for(let i = 0; i < size; i++) {
+            arr[i] = parseInt(prompt("Enter array element " + (i+1) + ":"));
+        }
+        
+        for(let i = 0; i < size-1; i++) {
+            let minIndex = i;
+            
+            for(let j = i+1; j < size; j++) {
+                if(arr[j] < arr[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            
+            if(minIndex !== i) {
+                let temp = arr[i];
+                arr[i] = arr[minIndex];
+                arr[minIndex] = temp;
+            }
+        }
+        
+        document.write("Sorted array in ascending order: " + arr);
+    </script>
+</body>
+</html>

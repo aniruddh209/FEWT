@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD on Array</title>
+</head>
+<body>
+    
+    <input type="text" id="nameInput" placeholder="Enter name">
+    <button onclick="addName()">Add</button>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody id="nameTableBody"></tbody>
+    </table>
+
+    <script>
+        let names = [];
+        let editIndex = -1;
+
+        function renderTable() {
+            const table = document.getElementById('nameTableBody');
+            table.innerHTML = '';
+            names.forEach((name, index) => {
+                const row = `
+                    <tr>
+                        <td>${name}</td>
+                        <td><button onclick="deleteName(${index})">Delete</button></td>
+                        <td><button onclick="editName(${index})">Edit</button></td>
+                    </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        function addName() {
+            const input = document.getElementById('nameInput');
+            const value = input.value.trim();
+            if (value === '') return;
+
+            if (editIndex === -1) {
+                names.push(value);
+            } else {
+                names[editIndex] = value;
+                editIndex = -1;
+            }
+
+            input.value = '';
+            renderTable();
+        }
+
+        function deleteName(index) {
+            names.splice(index, 1);
+            renderTable();
+        }
+
+        function editName(index) {
+            document.getElementById('nameInput').value = names[index];
+            editIndex = index;
+        }
+        renderTable();
+    </script>
+</body>
+</html>

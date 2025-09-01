@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>arraydemo</title>
+</head>
+<body>
+    <script>
+let faculties = ["Dr. Sharma", "Prof. Patel", "Ms. Gupta", "Mr. Verma"];
+
+console.log("Faculty List:");
+for (let i = 0; i < faculties.length; i++) {
+  console.log(`${i+1}. ${faculties[i]}`);
+}
+faculties.forEach((faculty, index) => {
+  console.log(`${index+1}. ${faculty}`);
+});
+    </script>
+</body>
+</html>

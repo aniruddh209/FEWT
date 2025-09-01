@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validate</title>
+</head>
+<body>
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username">
+    <span id="errorBox"></span>
+  </div>
+  <div>
+    <label for="password">Password</label>
+    <input type="text" id="password">
+    <span id="errorBoxpass"></span>
+  </div>
+  <div>
+    <label for="repeatPassword">Repeat Password</label>
+    <input type="text" id="repeatPassword">
+    <span id="errorBoxpassrepeat"></span>
+  </div>
+  <div>
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob">
+    <span id="dobError"></span>
+  </div>
+
+  <button onclick="validate()">Submit</button>
+
+  <script>
+    let username = document.getElementById('username');
+    let errorBox = document.getElementById('errorBox');
+    let usernamePattern = /^.{8,}$/;
+    let usernameRegx = new RegExp(usernamePattern);
+
+    let password = document.getElementById('password');
+    let errorBoxpass = document.getElementById('errorBoxpass');
+    let passwordPattern = /^(?=.*[^a-zA-Z0-9]).{8,12}$/;
+    let passwordRegx = new RegExp(passwordPattern);
+
+    let repeatPassword = document.getElementById('repeatPassword');
+    let errorBoxpassrepeat = document.getElementById('errorBoxpassrepeat');
+
+    let dob = document.getElementById('dob');
+    let dobError = document.getElementById('dobError');
+
+    function validate() {
+      let isValid = true;
+      errorBox.textContent = "";
+      errorBoxpass.textContent = "";
+      errorBoxpassrepeat.textContent = "";
+      dobError.textContent = "";
+
+      // Username validation
+      if (!usernameRegx.test(username.value)) {
+        errorBox.textContent = "Invalid Username (min 8 characters)";
+        isValid = false;
+      }
+
+      // Password validation
+      if (!passwordRegx.test(password.value)) {
+        errorBoxpass.textContent = "Invalid Password (8-12 chars with 1 special)";
+        isValid = false;
+      }
+
+      // Repeat password match
+      if (password.value !== repeatPassword.value) {
+        errorBoxpassrepeat.textContent = "Passwords do not match";
+        isValid = false;
+      }
+
+      // DOB validation
+      if (dob.value) {
+        const dobDate = new Date(dob.value);
+        const today = new Date();
+        let age = today.getFullYear() - dobDate.getFullYear();
+        const monthDiff = today.getMonth() - dobDate.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+          age--;
+        }
+
+        if (age < 18) {
+          dobError.textContent = 'You must be at least 18 years old';
+          isValid = false;
+        }
+      } else {
+        dobError.textContent = 'Date of birth is required';
+        isValid = false;
+      }
+
+      if (isValid) {
+        alert("Form submitted successfully!");
+      }
+    }
+  </script>
+</body>
+</html>

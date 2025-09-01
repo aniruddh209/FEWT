@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tabledesign</title>
+</head>
+<body>
+        //array object
+    <script>  
+     Student=[
+            {
+                name:"Miheer sakariya",
+                Backlog:"2",
+                Age:"20"
+        },
+        {
+                name: "Arpit gta 5",
+                Backlog:"2",
+                Age:"20"
+        },
+        {    
+                name: "Vraj hinsu",
+                Backlog:"2",
+                Age:"20"
+        },
+        {      
+                name: "Ankit v",
+                Backlog:"2",
+                Age:"20"
+        },
+        {      
+                name: "Nisarg markana",
+                Backlog:"2",
+                Age:"20"
+        },
+        {     
+                name: "Vishal B",
+                Backlog:"2",
+                Age:"17"
+        },
+        {    
+                name: "Aniruddh Parmar",
+                Backlog:"2",
+                Age:"17"
+        },
+        {     
+                name: "Nabhag sorthiya",
+                Backlog:"2",
+                Age:"18"
+        },
+        {   
+                name: "Bhavik Parmar",
+                Backlog:"2",
+                Age:"17"
+        },
+    ]
+    </script>
+    <script>
+    let table = `<table border="3" cellpadding="5" cellspacing="0">`
+        table+='<tr><th>Name</th><th>Backlog</th><th>Age</th></tr>'
+        for(i=0;i<Student.length;i++){
+        table +=`<tr>
+                <td>${Student[i].name}</td>
+                <td>${Student[i].Backlog}</td>
+                <td>${Student[i].Age}</td>
+                </tr>`;
+        }
+        table+=`</table>`
+        document.write(table);
+    </script>
+</body>
+</html>
